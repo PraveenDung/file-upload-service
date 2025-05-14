@@ -38,4 +38,28 @@ router.post("/", authMiddleware, upload.single("file"), async (req, res) => {
   }
 });
 
+router.get("/:id", authMiddleware, async (req, res) => {
+  const fileId = parseInt(req.params.id);
+
+  try {
+    const file = await prisma.file.findUnique({
+      where: { id: fileId },
+    });
+
+    if (!file) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    // Check ownership
+    if (file.userId !== req.user.id) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    res.json(file);
+  } catch (err) {
+    console.error("GET /files/:id error", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
