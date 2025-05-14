@@ -5,7 +5,16 @@ const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("./uploadMiddleware");
 const fileQueue = require("../jobs/queue");
 
-router.post("/", authMiddleware, upload.single("file"), async (req, res) => {
+router.post("/upload", authMiddleware, (req, res, next) => {
+  upload.single("file")(req, res, function (err) {
+    if (err && err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ message: "File too large. Max limit is 5MB." });
+    } else if (err) {
+      return res.status(400).json({ message: "File upload error", error: err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const { title, description } = req.body;
     const file = req.file;
@@ -38,7 +47,7 @@ router.post("/", authMiddleware, upload.single("file"), async (req, res) => {
   }
 });
 
-router.get("/:id", authMiddleware, async (req, res) => {
+router.get("/files/:id", authMiddleware, async (req, res) => {
   const fileId = parseInt(req.params.id);
 
   try {

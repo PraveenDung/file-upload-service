@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Route for handling file uploads (protected inside /files/routes.js)
-app.use("/upload", fileRoutes);
+app.use("/", fileRoutes);
 
 // Route for handling authentication (login, etc.)
 app.use('/auth', authRoutes);
