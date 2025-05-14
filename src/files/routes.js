@@ -3,9 +3,10 @@ const router = express.Router();
 const prisma = require("../utils/prisma");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("./uploadMiddleware");
+const uploadRateLimiter = require("../middleware/rateLimit");
 const fileQueue = require("../jobs/queue");
 
-router.post("/upload", authMiddleware, (req, res, next) => {
+router.post("/upload", authMiddleware,uploadRateLimiter, (req, res, next) => {
   upload.single("file")(req, res, function (err) {
     if (err && err.code === "LIMIT_FILE_SIZE") {
       return res.status(413).json({ message: "File too large. Max limit is 5MB." });
