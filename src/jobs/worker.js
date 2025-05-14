@@ -22,7 +22,7 @@ const worker = new Worker(
       },
     });
 
-    console.log(` File ID ${job.data.fileId} processed`);
+    console.log(`File ID ${job.data.fileId} processed`);
   },
   { connection }
 );
