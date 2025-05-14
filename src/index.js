@@ -9,6 +9,14 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require('./auth/routes');
 app.use('/auth', authRoutes);
 
+const authMiddleware = require("./middleware/authMiddleware");
+
+// Example protected route
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: `Hello ${req.user.email}!`, user: req.user });
+});
+
+
 // Health route
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
