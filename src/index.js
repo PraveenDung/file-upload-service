@@ -6,6 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const authRoutes = require('./auth/routes');
+app.use('/auth', authRoutes);
+
 // Health route
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
